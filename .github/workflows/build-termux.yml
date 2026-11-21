@@ -37,12 +37,14 @@ jobs:
             -w /src \
             python:3.11-slim-bookworm \
             bash -c "
-              apt-get update && apt-get install -y --no-install-recommends \
+              set -euo pipefail
+              apt-get update
+              apt-get install -y --no-install-recommends \
                 git curl ca-certificates \
                 gcc libc6-dev libffi-dev libssl-dev \
                 binutils \
-                upx-ucl \
-                2>/dev/null || true
+                upx-ucl
+              which objdump && objdump --version
               cd /src
               pip install --no-cache-dir -r requirements.txt
               pip install --no-cache-dir pyinstaller
