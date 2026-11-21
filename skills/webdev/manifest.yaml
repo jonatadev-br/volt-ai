@@ -1,0 +1,12 @@
+name: webdev
+description: Scaffold HTML/CSS/JS projects (landing page, portfolio, blog)
+version: "1.0"
+author: zyvo-clone
+triggers:
+  - landing page
+  - portfolio
+  - blog
+  - website
+  - html
+  - scaffold
+dependencies: []

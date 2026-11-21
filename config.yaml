@@ -1,0 +1,52 @@
+active_provider: nvidia_nim
+providers:
+  nvidia_nim:
+    base_url: "https://integrate.api.nvidia.com/v1"
+    model: "meta/llama-3.3-70b-instruct"
+    api_key_ref: "nvidia_nim"
+  openai:
+    base_url: "https://api.openai.com/v1"
+    model: "gpt-4o"
+    api_key_ref: "openai"
+  anthropic:
+    base_url: "https://api.anthropic.com/v1"
+    model: "claude-3-5-sonnet-20241022"
+    api_key_ref: "anthropic"
+  groq:
+    base_url: "https://api.groq.com/openai/v1"
+    model: "llama-3.3-70b-versatile"
+    api_key_ref: "groq"
+  openrouter:
+    base_url: "https://openrouter.ai/api/v1"
+    model: "meta-llama/llama-3.3-70b-instruct"
+    api_key_ref: "openrouter"
+  ollama:
+    base_url: "http://localhost:11434/v1"
+    model: "llama3.1:70b"
+    api_key_ref: "ollama"
+  openai_compatible:
+    base_url: ""
+    model: ""
+    api_key_ref: "openai_compatible"
+skills:
+  enabled:
+    - webdev
+    - motion-animation
+    - research
+    - shell-assist
+    - code-review
+safety:
+  shell_confirm: true
+  fs_root: null
+  blocklist:
+    - "rm -rf /"
+    - "rm -rf /*"
+    - "dd if="
+    - "mkfs"
+    - "shutdown"
+    - "reboot"
+    - ":(){ :|:& };:"
+    - "fork"
+server:
+  host: "127.0.0.1"
+  port: 8765

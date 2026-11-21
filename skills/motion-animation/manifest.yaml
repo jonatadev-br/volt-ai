@@ -1,0 +1,10 @@
+name: motion-animation
+description: Generate HTML+CSS+GSAP animations for recording
+version: "1.0"
+author: zyvo-clone
+triggers:
+  - animation
+  - gsap
+  - motion
+  - animate
+dependencies: []

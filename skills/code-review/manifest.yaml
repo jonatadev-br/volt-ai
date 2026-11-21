@@ -1,0 +1,10 @@
+name: code-review
+description: Review code files/directories for issues, severity, and patches
+version: "1.0"
+author: zyvo-clone
+triggers:
+  - review
+  - code review
+  - audit
+  - lint
+dependencies: []

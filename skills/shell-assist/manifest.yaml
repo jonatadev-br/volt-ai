@@ -1,0 +1,11 @@
+name: shell-assist
+description: Explain shell commands before execution; block destructive commands
+version: "1.0"
+author: zyvo-clone
+triggers:
+  - shell
+  - command
+  - terminal
+  - bash
+  - explain
+dependencies: []

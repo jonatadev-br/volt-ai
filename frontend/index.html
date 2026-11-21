@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>zyvo-clone</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app">
+        <header class="header">
+            <div class="logo">zyvo-clone</div>
+            <div class="tabs" role="tablist">
+                <button class="tab active" role="tab" data-tab="chat">Chat</button>
+                <button class="tab" role="tab" data-tab="config">Config</button>
+                <button class="tab" role="tab" data-tab="skills">Skills</button>
+                <button class="tab" role="tab" data-tab="project">Project</button>
+                <button class="tab" role="tab" data-tab="sessions">Sessions</button>
+            </div>
+        </header>
+        <main class="main">
+            <section id="tab-chat" class="tab-panel active" role="tabpanel">
+                <div class="chat-container">
+                    <div class="chat-header">
+                        <select id="session-select"></select>
+                        <button id="new-session-btn" class="btn">New Session</button>
+                    </div>
+                    <div id="chat-messages" class="chat-messages"></div>
+                    <div class="chat-input-area">
+                        <textarea id="chat-input" placeholder="Type a message... (Shift+Enter for new line)"></textarea>
+                        <div class="chat-actions">
+                            <button id="send-btn" class="btn primary">Send</button>
+                            <button id="stop-btn" class="btn danger" disabled>Stop</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section id="tab-config" class="tab-panel" role="tabpanel">
+                <div class="config-container">
+                    <h2>Providers</h2>
+                    <div id="providers-list" class="providers-list"></div>
+                    <div id="provider-form" class="provider-form hidden"></div>
+                </div>
+            </section>
+            <section id="tab-skills" class="tab-panel" role="tabpanel">
+                <div class="skills-container">
+                    <h2>Skills</h2>
+                    <div id="skills-list" class="skills-list"></div>
+                    <div id="skill-detail" class="skill-detail hidden"></div>
+                </div>
+            </section>
+            <section id="tab-project" class="tab-panel" role="tabpanel">
+                <div class="project-container">
+                    <h2>Project</h2>
+                    <div class="form-group">
+                        <label>Working Directory</label>
+                        <input type="text" id="project-dir" placeholder="/path/to/project">
+                        <button id="load-project-btn" class="btn">Load</button>
+                    </div>
+                    <div class="form-group">
+                        <label>AGENTS.md</label>
+                        <textarea id="agents-md" rows="20" placeholder="Project memory..."></textarea>
+                    </div>
+                    <button id="save-agents-btn" class="btn primary">Save AGENTS.md</button>
+                </div>
+            </section>
+            <section id="tab-sessions" class="tab-panel" role="tabpanel">
+                <div class="sessions-container">
+                    <h2>Sessions</h2>
+                    <button id="new-session-btn-2" class="btn">New Session</button>
+                    <div id="sessions-list" class="sessions-list"></div>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
