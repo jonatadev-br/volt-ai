@@ -2,6 +2,23 @@
 
 Desktop AI agent inspired by Zyvo AI — local GUI, multi-provider (NVIDIA NIM, OpenAI, Anthropic, Groq, OpenRouter, Ollama), extensible skills system, CLI + Web UI.
 
+## ⚡ Install no Termux (Android) — 1 Comando
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/jonataprezende-commits/volt-ai/main/install-termux.sh | bash
+```
+
+Depois:
+```bash
+volt-ai chat          # Abre GUI em http://127.0.0.1:8765
+volt-ai run "prompt"  # CLI direto
+```
+
+> **Requisitos**: Termux no ARM64 (aarch64) — a maioria dos Androids modernos.
+> Baixa binário pré-compilado do GitHub Releases (`termux-latest`).
+
+---
+
 ## Features
 
 - **Multi-provider**: NVIDIA NIM (primary), OpenAI, Anthropic, Groq, OpenRouter, Ollama, custom OpenAI-compatible
@@ -13,21 +30,6 @@ Desktop AI agent inspired by Zyvo AI — local GUI, multi-provider (NVIDIA NIM, 
 - **Build**: PyInstaller onefile executables for Windows/macOS/Linux
 
 ## Quick Start
-
-### Install on Termux (Android) — One Command
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/jonataprezende-commits/volt-ai/main/install-termux.sh | bash
-```
-
-Then run:
-```bash
-volt-ai chat          # GUI at http://127.0.0.1:8765
-volt-ai run "prompt"  # CLI one-shot
-```
-
-> **Requires**: Termux on ARM64 (aarch64) — most modern Android phones.
-> Binary is downloaded from GitHub Releases (`termux-latest` tag).
 
 ### Install (Development / Desktop)
 
