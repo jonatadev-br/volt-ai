@@ -1,0 +1,88 @@
+name: Build Volt-AI for Termux (aarch64)
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag (e.g., termux-latest, v1.0.0)'
+        required: true
+        default: 'termux-latest'
+  push:
+    tags:
+      - 'termux-*'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build aarch64 binary
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build in aarch64 container
+        run: |
+          docker run --rm --platform linux/arm64 \
+            -v "${{ github.workspace }}:/src" \
+            -w /src \
+            python:3.11-slim-bookworm \
+            bash -c "
+              apt-get update && apt-get install -y --no-install-recommends \
+                git curl ca-certificates \
+                gcc libc6-dev libffi-dev libssl-dev \
+                upx-ucl \
+                2>/dev/null || true
+              cd /src
+              pip install --no-cache-dir -r requirements.txt
+              pip install --no-cache-dir pyinstaller
+              cd build
+              chmod +x build_linux.sh
+              ./build_linux.sh
+            "
+
+      - name: Verify binary
+        run: |
+          docker run --rm --platform linux/arm64 \
+            -v "${{ github.workspace }}:/src" \
+            -w /src \
+            python:3.11-slim-bookworm \
+            bash -c "
+              file dist/Volt-AI
+              ./dist/Volt-AI --help 2>&1 | head -5 || true
+            "
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Volt-AI-termux
+          path: dist/Volt-AI
+          retention-days: 30
+
+      - name: Create Release
+        if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/termux-')
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event.inputs.tag || github.ref_name }}
+          name: Volt-AI Termux ${{ github.event.inputs.tag || github.ref_name }}
+          body: |
+            **Volt-AI for Termux (aarch64 Linux)**
+            
+            Built from commit: ${{ github.sha }}
+            
+            ### Install
+            ```bash
+            curl -fsSL https://github.com/${{ github.repository }}/releases/download/${{ github.event.inputs.tag || github.ref_name }}/Volt-AI -o ~/.local/bin/volt-ai
+            chmod +x ~/.local/bin/volt-ai
+            mkdir -p ~/.volt-ai
+            volt-ai chat --no-browser
+            ```
+          files: dist/Volt-AI
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
