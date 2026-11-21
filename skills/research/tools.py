@@ -45,11 +45,12 @@ def extract_title(html: str) -> str:
     return match.group(1).strip() if match else ""
 
 async def summarize_with_llm(topic: str, sources: List[Dict]) -> str:
-    from core.config import load_config, get_litellm_config
-    import litellm
+    from core.config import load_config
+    from core.providers import get_completion_config
+    import httpx
     config = load_config()
-    params = get_litellm_config(config)
-    
+    params = get_completion_config(config)
+
     source_text = "\n\n".join([f"SOURCE: {s.get('title', s['url'])}\n{s.get('content', s.get('error', ''))[:3000]}" for s in sources])
     prompt = f"""Research topic: {topic}
 
@@ -63,12 +64,23 @@ Provide a structured summary with:
 - Sources cited inline with [n]"""
 
     try:
-        resp = await litellm.acompletion(
-            messages=[{"role": "user", "content": prompt}],
-            max_tokens=2000,
-            **params
-        )
-        return resp.choices[0].message.content
+        headers = {"Content-Type": "application/json"}
+        if params.get("api_key"):
+            headers["Authorization"] = f"Bearer {params['api_key']}"
+        async with httpx.AsyncClient(timeout=120) as client:
+            resp = await client.post(
+                f"{params['api_base'].rstrip('/')}/chat/completions",
+                headers=headers,
+                json={
+                    "model": params["model"],
+                    "messages": [{"role": "user", "content": prompt}],
+                    "max_tokens": 2000,
+                    "stream": False,
+                },
+            )
+            resp.raise_for_status()
+            data = resp.json()
+        return data["choices"][0]["message"]["content"]
     except Exception as e:
         return f"Summary failed: {e}"
 

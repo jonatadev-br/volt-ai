@@ -2,7 +2,7 @@
 
 Desktop AI agent inspired by Zyvo AI — local GUI, multi-provider (NVIDIA NIM, OpenAI, Anthropic, Groq, OpenRouter, Ollama), extensible skills system, CLI + Web UI.
 
-## ⚡ Install no Termux (Android) — 1 Comando
+## ⚡ Install — 1 comando (Termux / Linux / macOS)
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/jonataprezende-commits/volt-ai/main/install-termux.sh | bash
@@ -10,12 +10,14 @@ curl -fsSL https://raw.githubusercontent.com/jonataprezende-commits/volt-ai/main
 
 Depois:
 ```bash
-volt-ai chat          # Abre GUI em http://127.0.0.1:8765
-volt-ai run "prompt"  # CLI direto
+volt-ai chat                              # abre a GUI em http://127.0.0.1:8765
+volt-ai config set-key nvidia_nim SUA_CHAVE
+volt-ai run "seu prompt"                  # CLI direto
+volt-ai update                            # atualizar
 ```
 
-> **Requisitos**: Termux no ARM64 (aarch64) — a maioria dos Androids modernos.
-> Baixa binário pré-compilado do GitHub Releases (`termux-latest`).
+> **Sem compilar nada**: baixa o código, cria um venv em `~/.volt-ai/venv`
+> e instala apenas deps pure-Python — funciona no Python 3.14 do Termux.
 
 ---
 
@@ -26,18 +28,15 @@ volt-ai run "prompt"  # CLI direto
 - **CLI**: `volt-ai run "prompt"`, `volt-ai chat`, `volt-ai skills list`, etc.
 - **Skills**: webdev, motion-animation, research, shell-assist, code-review (extensible)
 - **Memory**: AGENTS.md per project + SQLite session history
-- **Security**: API keys in system keyring, shell confirmations, path traversal protection, command blocklist
-- **Build**: PyInstaller onefile executables for Windows/macOS/Linux
+- **Security**: API keys in the OS keyring (file fallback, `0600`, for Termux), shell confirmations, path traversal protection, command blocklist
+- **Zero native deps**: Starlette + uvicorn + httpx (no litellm, no pydantic, no compilation)
 
 ## Quick Start
 
-### Install (Development / Desktop)
+### Install (development, from this folder)
 
 ```bash
-git clone <repo>
-cd volt-ai
-pip install -r requirements.txt
-cp config.yaml ~/.volt-ai/config.yaml  # auto-created on first run
+./build_termux_local.sh     # venv-dev + launcher em ~/.local/bin/volt-ai
 volt-ai chat
 ```
 

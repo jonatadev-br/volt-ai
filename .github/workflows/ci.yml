@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: test (py${{ matrix.python }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.11", "3.13"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt -r dev-requirements.txt
+
+      - name: Unit tests
+        run: pytest -q
+
+      - name: Agent loop e2e (mock LLM server)
+        run: python test_e2e_mock.py
+
+      - name: Server health check
+        run: |
+          python main.py --no-browser --port 8799 &
+          for i in $(seq 1 30); do
+            sleep 1
+            curl -fsS http://127.0.0.1:8799/api/health -o health.json && break
+          done
+          cat health.json
+          grep -q '"status":"ok"' health.json
+          curl -fsS http://127.0.0.1:8799/api/config | head -c 200
+          curl -fsS -o /dev/null -w "index=%{http_code}\n" http://127.0.0.1:8799/
+
+      - name: CLI smoke
+        run: |
+          python cli.py --version
+          python cli.py config show
+          python cli.py skills list

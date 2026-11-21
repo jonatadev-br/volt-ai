@@ -28,9 +28,10 @@ def _validate_path(path: str) -> Path:
 
 def _check_blocklist(cmd: str) -> bool:
     config = _get_config()
+    # Normalise whitespace so "rm   -rf  /" cannot slip past a substring match.
+    lowered = " ".join(cmd.lower().split())
     for blocked in config.safety.blocklist:
-        pattern = r'\b' + re.escape(blocked) + r'\b'
-        if re.search(pattern, cmd, re.IGNORECASE):
+        if blocked.lower() in lowered:
             return True
     return False
 
@@ -220,6 +221,7 @@ TOOL_FUNCTIONS = {
 
 
 def execute_tool(name: str, args: Dict[str, Any]) -> Dict[str, Any]:
+    """Sync tool dispatch (used by the CLI / tests)."""
     func = TOOL_FUNCTIONS.get(name)
     if not func:
         return {"error": f"Unknown tool: {name}"}
@@ -228,6 +230,20 @@ def execute_tool(name: str, args: Dict[str, Any]) -> Dict[str, Any]:
         if inspect.iscoroutinefunction(func):
             import asyncio
             return asyncio.run(func(**args))
+        return func(**args)
+    except Exception as e:
+        return {"error": f"Tool execution failed: {e}"}
+
+
+async def execute_tool_async(name: str, args: Dict[str, Any]) -> Dict[str, Any]:
+    """Async-safe tool dispatch — awaits coroutine tools (fetch_url) in place."""
+    func = TOOL_FUNCTIONS.get(name)
+    if not func:
+        return {"error": f"Unknown tool: {name}"}
+    try:
+        import inspect
+        if inspect.iscoroutinefunction(func):
+            return await func(**args)
         return func(**args)
     except Exception as e:
         return {"error": f"Tool execution failed: {e}"}
