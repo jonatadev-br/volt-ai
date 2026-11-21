@@ -43,7 +43,7 @@ jobs:
                 git curl ca-certificates \
                 gcc libc6-dev libffi-dev libssl-dev \
                 binutils \
-                upx-ucl
+                upx
               which objdump && objdump --version
               cd /src
               pip install --no-cache-dir -r requirements.txt
