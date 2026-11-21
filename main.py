@@ -234,6 +234,25 @@ routes = [
 app = Starlette(routes=routes)
 
 
+def _open_browser(url: str):
+    import shutil, subprocess
+    for cmd in (
+        ["termux-open-url", url],
+        ["xdg-open", url],
+        ["am", "start", "-a", "android.intent.action.VIEW", "-d", url],
+    ):
+        if shutil.which(cmd[0]):
+            try:
+                subprocess.run(cmd, check=False)
+                return
+            except Exception:
+                pass
+    try:
+        webbrowser.open(url)
+    except Exception:
+        pass
+
+
 def run_server(host: str = None, port: int = None, no_browser: bool = False):
     config = load_config()
     host = host or config.server.host or "127.0.0.1"
@@ -241,8 +260,9 @@ def run_server(host: str = None, port: int = None, no_browser: bool = False):
     if not no_browser:
         def open_browser():
             time.sleep(1.5)
-            webbrowser.open(f"http://{host}:{port}")
+            _open_browser(f"http://{host}:{port}")
         threading.Thread(target=open_browser, daemon=True).start()
+        print(f"[Volt-AI] abrindo {host}:{port} no navegador...")
     uvicorn.run(app, host=host, port=port, log_level="warning")
 
 
