@@ -40,6 +40,7 @@ jobs:
               apt-get update && apt-get install -y --no-install-recommends \
                 git curl ca-certificates \
                 gcc libc6-dev libffi-dev libssl-dev \
+                binutils \
                 upx-ucl \
                 2>/dev/null || true
               cd /src

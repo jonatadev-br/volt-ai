@@ -10,6 +10,5 @@ keyring>=25.0.0
 cryptography>=42.0.0
 httpx>=0.27.0
 rich>=13.7.0
-sqlite3
 python-multipart>=0.0.6
 tiktoken>=0.7.0
