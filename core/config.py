@@ -68,10 +68,12 @@ class ProviderConfig:
 @dataclass
 class SafetyConfig:
     shell_confirm: bool = True
+    shell_assist_enabled: bool = False  # opt-in: execucao de shell remoto local
     fs_root: Optional[str] = None
     blocklist: List[str] = field(default_factory=lambda: [
         "rm -rf /", "rm -rf /*", "dd if=", "mkfs", "shutdown", "reboot",
-        ":(){ :|:& };:", "fork",
+        ":(){ :|:& };:", "fork", "> /dev/sda", "chmod 777 /", "chown -R",
+        "> /dev/", "mkfs.", "fdisk", "parted", "> /proc/", "> /sys/",
     ])
 
 

@@ -37,6 +37,7 @@ skills:
     - code-review
 safety:
   shell_confirm: true
+  shell_assist_enabled: false
   fs_root: null
   blocklist:
     - "rm -rf /"
