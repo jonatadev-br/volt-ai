@@ -28,10 +28,14 @@ def _validate_path(path: str) -> Path:
 
 def _check_blocklist(cmd: str) -> bool:
     config = _get_config()
-    # Normalise whitespace so "rm   -rf  /" cannot slip past a substring match.
+    # Normalise whitespace so "rm   -rf  /" cannot slip past a match.
     lowered = " ".join(cmd.lower().split())
     for blocked in config.safety.blocklist:
-        if blocked.lower() in lowered:
+        # Anchor only at start (start of string or preceded by whitespace).
+        # No end anchor: "dd if=" must match "dd if=/dev/zero", while
+        # "rm -rf /" must NOT match "rm -rf /tmp".
+        pattern = r'(?:^|\s)' + re.escape(blocked.lower())
+        if re.search(pattern, lowered):
             return True
     return False
 
@@ -78,6 +82,12 @@ def list_dir(path: str = ".") -> Dict[str, Any]:
 
 def run_shell(cmd: str, cwd: str = ".", confirm: bool = True) -> Dict[str, Any]:
     config = _get_config()
+    if not config.safety.shell_assist_enabled:
+        return {
+            "error": "Shell execution disabled. Enable shell_assist_enabled in config to allow.",
+            "needs_confirmation": False,
+            "command": cmd,
+        }
     if confirm and config.safety.shell_confirm:
         return {"error": "Shell execution requires confirmation", "needs_confirmation": True, "command": cmd}
     if _check_blocklist(cmd):
