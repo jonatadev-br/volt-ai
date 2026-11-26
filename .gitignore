@@ -6,9 +6,14 @@ dist/
 build/
 *.spec
 .env
+.env.local
 .venv
 venv/
 *.log
 .DS_Store
 *.swp
 *.swo
+# Segredos do Volt-AI (armazenados em ~/.volt-ai, nunca commitar)
+keys.json
+config.yaml
+*.keys.json
