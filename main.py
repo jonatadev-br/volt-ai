@@ -1,4 +1,5 @@
 """Volt-AI HTTP + WebSocket server — Starlette (no FastAPI/pydantic)."""
+import socket
 import sys
 import time
 import threading
@@ -175,9 +176,22 @@ async def ws_chat(websocket: WebSocket):
     session_id = int(websocket.path_params["session_id"])
     config = load_config()
     origin = websocket.headers.get("origin", "")
-    allowed = {f"http://{config.server.host}:{config.server.port}",
-               f"http://127.0.0.1:{config.server.port}",
-               f"http://localhost:{config.server.port}"}
+    host = config.server.host or "127.0.0.1"
+    port = config.server.port
+    allowed = {
+        f"http://{host}:{port}",
+        f"http://127.0.0.1:{port}",
+        f"http://localhost:{port}",
+    }
+    # Adiciona o IP local da máquina para permitir acesso por rede local (ex: Termux via Wi-Fi)
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80))
+        local_ip = s.getsockname()[0]
+        s.close()
+        allowed.add(f"http://{local_ip}:{port}")
+    except Exception:
+        pass
     if origin and origin not in allowed:
         await websocket.close(code=4003)
         return

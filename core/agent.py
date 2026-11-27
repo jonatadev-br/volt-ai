@@ -122,7 +122,7 @@ class Agent:
                     yield {"type": "tool_result", "name": tc["name"], "id": tc["id"], "result": result}
                     messages.append({
                         "role": "assistant",
-                        "content": "".join(content_parts) or None,
+                        "content": "".join(content_parts) or "",
                         "tool_calls": [{
                             "id": tc["id"],
                             "type": "function",
@@ -134,6 +134,9 @@ class Agent:
                         "tool_call_id": tc["id"],
                         "content": json.dumps(result, ensure_ascii=False),
                     })
+                    add_message(self.session_id, "tool",
+                                json.dumps(result, ensure_ascii=False),
+                                tool_call_id=tc["id"])
                 continue
 
             full_content = "".join(content_parts)
@@ -148,8 +151,6 @@ class Agent:
         messages: List[Dict] = [{"role": "system", "content": self._get_system_prompt()}]
         history = get_messages(self.session_id)
         for msg in history[-20:]:
-            if msg["role"] == "tool":
-                continue
             m: Dict[str, Any] = {"role": msg["role"]}
             if msg["content"]:
                 m["content"] = msg["content"]
